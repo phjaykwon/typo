@@ -31,6 +31,19 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
+
+And /^I am logged into the publisher panel$/ do
+  visit '/accounts/login'
+  fill_in 'user_login', :with => 'publisher1'
+  fill_in 'user_password', :with => 'pass1pass'
+  click_button 'Login'
+  if page.respond_to? :should
+    page.should have_content('Login successful')
+  else
+    assert page.has_content?('Login successful')
+  end
+end
+
 Given /^the blog is set up$/ do
   Blog.default.update_attributes!({:blog_name => 'Teh Blag',
                                    :base_url => 'http://localhost:3000'});
@@ -41,6 +54,30 @@ Given /^the blog is set up$/ do
                 :profile_id => 1,
                 :name => 'admin',
                 :state => 'active'})
+  User.create!({:login => 'publisher1',
+                :password => 'pass1pass',
+                :email => 'pub1@pub.com',
+                :profile_id => 2,
+                :name => 'publisher1',
+                :state => 'active'})
+  User.create!({:login => 'publisher2',
+                :password => 'pass2pass',
+                :email => 'pub2@pub.com',
+                :profile_id => 3,
+                :name => 'publisher2',
+                :state => 'active'})
+  Article.create!({:title => 'pub1article',
+                  :author => 'publisher1',
+                  :body => 'pub1body',
+                  :user_id => 2,
+                  :name => 'publisher1',
+                  :published => true})
+  Article.create!({:title => 'pub2article',
+                  :author => 'publisher2',
+                  :body => 'pub2body',
+                  :user_id => 3,
+                  :name => 'publisher2',
+                  :published => true})
 end
 
 And /^I am logged into the admin panel$/ do

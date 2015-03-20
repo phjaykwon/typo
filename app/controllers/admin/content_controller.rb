@@ -24,10 +24,12 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def new
+    @new = true
     new_or_edit
   end
 
   def edit
+    @new = false
     @article = Article.find(params[:id])
     unless @article.access_by? current_user
       redirect_to :action => 'index'
@@ -113,6 +115,23 @@ class Admin::ContentController < Admin::BaseController
     render :text => nil
   end
 
+  def admin_merge
+    @curr_article = Article.find(params[:id])
+    @other_article = Article.where(:id => params[:merge_with]).first
+
+    if @other_article.blank?
+      flash[:error] = "Enter a valid article ID"
+      redirect_to :action => 'edit', :id => params[:id]
+    elsif @other_article.id == @curr_article.id
+      flash[:error] = "Enter a different article"
+      redirect_to :action => 'edit', :id => params[:id]
+    else
+      @curr_article.merge_with(params[:merge_with])
+      flash[:notice] = ("Article merged!")
+      redirect_to :action => 'index'
+    end
+  end
+
   protected
 
   def get_fresh_or_existing_draft_for_article
@@ -144,6 +163,7 @@ class Admin::ContentController < Admin::BaseController
     id = params[:article][:id] if params[:article] && params[:article][:id]
     @article = Article.get_or_build_article(id)
     @article.text_filter = current_user.text_filter if current_user.simple_editor?
+    @user = current_user
 
     @post_types = PostType.find(:all)
     if request.post?
