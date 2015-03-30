@@ -20,6 +20,11 @@ module NavigationHelpers
     when /^the edit article page for "(.*)"$/
       @article = Article.where(title: "#{$1}").first
       "/admin/content/edit/#{@article.id}"
+    when /^the new category page$/
+      '/admin/categories/new'
+    when /^the edit category page for (.*)$/
+      "/admin/categories/edit/#{$1}"
+
     
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:

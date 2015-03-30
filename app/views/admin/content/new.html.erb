@@ -11,6 +11,9 @@
 	          <%= text_field_tag :merge_with %>
 	        </div>
 	        <%= submit_tag(_('Merge')) %>
+	      <label for 'merge'><%= _('Article ID ') %></label>
+	      <%= text_field_tag (:merge_with) %>
+	      <%= submit_tag(_("Merge")) %>
 	    </div>
 	<% end %>
 <% end %>
