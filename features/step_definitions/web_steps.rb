@@ -31,7 +31,6 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
-
 And /^I am logged into the publisher panel$/ do
   visit '/accounts/login'
   fill_in 'user_login', :with => 'publisher1'
@@ -92,6 +91,10 @@ And /^I am logged into the admin panel$/ do
   end
 end
 
+Then /^there should be only one author for "(.*)"$/ do |foo|
+  @article = Article.where(title: "#{foo}").first
+  assert @article.author == 'publisher1' or @article.author == 'publisher2'
+end
 # Single-line step scoper
 When /^(.*) within (.*[^:])$/ do |step, parent|
   with_scope(parent) { When step }
